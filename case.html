@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Study — Kareem Osama</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="glow a"></div>
+<div class="glow b"></div>
+
+<header>
+  <nav>
+    <div class="brand"><a href="index.html" style="display:flex;align-items:center;gap:10px"><span class="brand-dot"></span><span class="brand-name">KAREEM OSAMA</span></a></div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">MENU</button>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html#about">About</a>
+      <a href="index.html#education">Education &amp; Work</a>
+      <a href="index.html#work">Case Studies</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </nav>
+</header>
+<div class="nav-scrim" id="navScrim"></div>
+
+<main id="caseRoot"></main>
+
+<footer>© 2026 KAREEM OSAMA — PERFORMANCE MARKETER &amp; GROWTH SYSTEMS BUILDER</footer>
+
+<script src="case-data.js"></script>
+<script>
+  const toggle=document.getElementById('navToggle');
+  const links=document.getElementById('navLinks');
+  const scrim=document.getElementById('navScrim');
+  function closeMenu(){links.classList.remove('open');scrim.classList.remove('open');toggle.textContent='MENU';}
+  function openMenu(){links.classList.add('open');scrim.classList.add('open');toggle.textContent='CLOSE';}
+  toggle.addEventListener('click',()=>links.classList.contains('open')?closeMenu():openMenu());
+  scrim.addEventListener('click',closeMenu);
+  links.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
+
+  const params=new URLSearchParams(location.search);
+  const id=params.get('c');
+  const c=CASES[id];
+  const root=document.getElementById('caseRoot');
+
+  if(!c){
+    root.innerHTML=`<section class="case-hero"><div class="container"><a class="back-link" href="index.html">← Back to portfolio</a><h1>Case not found</h1><p class="meta">This case study doesn't exist. Head back to the portfolio.</p></div></section>`;
+  } else {
+    document.title=`${c.name} — Kareem Osama`;
+
+    // prev/next within all cases order
+    const order=[];
+    INDUSTRIES.forEach(i=>i.cases.forEach(x=>order.push(x)));
+    const idx=order.indexOf(id);
+    const prev=idx>0?order[idx-1]:order[order.length-1];
+    const next=idx<order.length-1?order[idx+1]:order[0];
+
+    const stats=c.stats.map(s=>`<div class="chs"><div class="v">${s.v}</div><div class="l">${s.l}</div></div>`).join('');
+    const exec=c.strategy.map(s=>`<li>${s}</li>`).join('');
+    const results=c.results.map(r=>`<div class="result-box"><div class="v">${r.v}</div><div class="l">${r.l}</div></div>`).join('');
+    const proof=c.images.map((img,i)=>`
+      <figure class="proof-fig">
+        <img src="assets/case-images/${img}" alt="${c.captions&&c.captions[i]?c.captions[i]:c.name}">
+        ${c.captions&&c.captions[i]?`<figcaption class="cap">${c.captions[i]}</figcaption>`:''}
+      </figure>`).join('');
+
+    root.innerHTML=`
+      <section class="case-hero">
+        <div class="container">
+          <a class="back-link" href="index.html#work">← Back to all case studies</a>
+          <div class="tag">${c.industry}</div>
+          <h1>${c.name}</h1>
+          <div class="meta">${c.market}</div>
+          <div class="case-hero-stats">${stats}</div>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <div class="container">
+          <div class="k">The Situation</div>
+          <h2>Where It Started</h2>
+          <p>${c.situation}</p>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <div class="container">
+          <div class="k">Strategy &amp; Execution</div>
+          <h2>What I Did</h2>
+          <ul class="exec-list">${exec}</ul>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <div class="container">
+          <div class="k">Results</div>
+          <h2>The Numbers</h2>
+          <div class="result-grid">${results}</div>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <div class="container">
+          <div class="k">Proof</div>
+          <h2>From The Dashboards</h2>
+          <p style="color:var(--ink-faint);font-size:13px">Sensitive identifiers are hidden. Watermarked from Meta Ads Manager, Shopify, and live sales trackers.</p>
+          <div class="proof-imgs">${proof}</div>
+        </div>
+      </section>
+
+      <section class="case-section">
+        <div class="container">
+          <div class="takeaway">
+            <div class="k">Key Takeaway</div>
+            <p>${c.takeaway}</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="container">
+        <div class="case-nav">
+          <a href="case.html?c=${prev}">← ${CASES[prev].name}</a>
+          <a href="case.html?c=${next}">${CASES[next].name} →</a>
+        </div>
+      </div>
+    `;
+    window.scrollTo(0,0);
+  }
+</script>
+
+</body>
+</html>
